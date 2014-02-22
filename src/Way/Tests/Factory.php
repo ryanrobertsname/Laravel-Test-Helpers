@@ -112,6 +112,8 @@ class Factory {
      */
     public static function make($class, $columns = array())
     {
+        static::$isSaving = false;
+
         $instance = new static;
 
         return $instance->fire($class, $columns);
