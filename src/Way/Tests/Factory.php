@@ -31,7 +31,7 @@ class Factory {
      *
      * @var array
      */
-    protected static $columns;
+    protected $columns;
 
     /**
      * Whether models are being
@@ -225,13 +225,13 @@ class Factory {
         // We only want to fetch the table details
         // once. We'll store these fields with a
         // $columns property for future fetching.
-        if (isset(static::$columns[$this->tableName]))
+        if (isset($this->columns[$this->tableName]))
         {
-            return static::$columns[$this->tableName];
+            return $this->columns[$this->tableName];
         }
 
         // This will only run the first time the factory is created.
-        return static::$columns[$this->tableName] = $this->db->getDoctrineSchemaManager()->listTableDetails($tableName)->getColumns();
+        return $this->columns[$this->tableName] = $this->db->getDoctrineSchemaManager()->listTableDetails($tableName)->getColumns();
     }
 
     /**
