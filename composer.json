@@ -11,7 +11,7 @@
         "php": ">=5.3.0"
     },
     "require-dev": {
-        "illuminate/support": "4.0.x",
+        "illuminate/support": "4.1.x",
         "mockery/mockery": "*"
     },
     "autoload": {
