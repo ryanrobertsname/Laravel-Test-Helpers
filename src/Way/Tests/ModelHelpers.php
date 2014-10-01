@@ -50,6 +50,16 @@ trait ModelHelpers {
     {
         $this->assertRelationship($relation, $class, 'morphTo');
     }
+    
+    public function assertMorphToMany($relation, $class)
+    {
+        $this->assertRelationship($relation, $class, 'morphToMany');
+    }
+
+    public function assertMorphByMany($relation, $class)
+    {
+        $this->assertRelationship($relation, $class, 'morphByMany');
+    }
 
     public function assertRespondsTo($method, $class, $message = null)
     {
