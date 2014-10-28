@@ -164,6 +164,16 @@ class DataStore {
     }
 
     /**
+     * Get some random Lorem text for Blob
+     *
+     * @return string
+     */
+    public function getBlob()
+    {
+        return $this->getText();
+    }
+
+    /**
      * Get some random Street name
      *
      * @return string
