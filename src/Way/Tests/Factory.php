@@ -140,8 +140,8 @@ class Factory {
      */
     public function fire($class, array $overrides = array())
     {
-        $this->tableName = $this->parseTableName($class);
         $this->class = $this->createModel($class);
+        $this->tableName = $this->class->getTable();
 
         // First, we dynamically fetch the fields for the table
         $columns = $this->getColumns($this->tableName);
@@ -151,19 +151,6 @@ class Factory {
 
         // And then return the new class
         return $this->class;
-    }
-
-    /**
-     * Calulate the table name
-     *
-     * @param  string $class
-     * @return string
-     */
-    protected function parseTableName($class)
-    {
-        return $this->isNamespaced($class)
-            ? snake_case(str_plural(substr(strrchr($class, '\\'), 1)))
-            : snake_case(str_plural($class));
     }
 
     /**
