@@ -146,13 +146,8 @@ class Factory {
         // First, we dynamically fetch the fields for the table
         $columns = $this->getColumns($this->tableName);
 
-        // Then, we set dummy value on the model.
-        $this->setColumns($columns);
-
-        // Finally, if they specified any overrides, like
-        // Factory::make('Post', ['title' => null]),
-        // we'll make those take precedence.
-        $this->applyOverrides($overrides);
+        // Then, set column values.
+        $this->setColumns($columns, $overrides);
 
         // And then return the new class
         return $this->class;
@@ -200,21 +195,6 @@ class Factory {
     }
 
     /**
-     * If overrides are set, then
-     * override default values with them.
-     *
-     * @param array $overrides
-     * @return void
-     */
-    protected function applyOverrides(array $overrides)
-    {
-        foreach ($overrides as $field => $value)
-        {
-           $this->class->$field = $value;
-        }
-    }
-
-    /**
      * Fetch the table fields for the class.
      *
      * @param  string $tableName
@@ -239,7 +219,7 @@ class Factory {
      *
      * @param array $columns
      */
-    protected function setColumns(Array $columns)
+    protected function setColumns(Array $columns, Array $overrides)
     {
         foreach($columns as $key => $col)
         {
@@ -248,6 +228,13 @@ class Factory {
                 $this->class->$key = $this->createRelationship($relation);
                 continue;
             }
+            
+            if (array_key_exists($key, $overrides))
+            {
+                $this->class->$key = $overrides[$key];
+                continue; 
+            }
+
             $this->class->$key = $this->setColumn($key, $col);
         }
     }
@@ -264,6 +251,7 @@ class Factory {
         if ($name === 'id') return;
 
         $method = $this->getFakeMethodName($name, $col);
+
         if (method_exists($this->dataStore, $method))
         {
             return $this->dataStore->{$method}();
