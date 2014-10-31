@@ -208,32 +208,38 @@ class Factory {
      */
     protected function setColumns(Array $columns, Array $overrides)
     {
+        //override id if provided
+        if (isset($overrides['id']))
+            $this->class->id = $overrides['id'];
+
+        //loop through table columns and fill with stub or override value
         foreach($columns as $key => $col)
         {
+            //create relationship
             if ($relation = $this->hasForeignKey($key))
             {
                 $this->class->$key = $this->createRelationship($relation);
                 continue;
             }
-            
+            //fill with override
             if (array_key_exists($key, $overrides))
             {
                 $this->class->$key = $overrides[$key];
                 continue; 
             }
-
-            $this->class->$key = $this->setColumn($key, $col);
+            //fill with stub
+            $this->class->$key = $this->setColumnWithStub($key, $col);
         }
     }
 
     /**
-     * Set single column
+     * Set single column with stub value
      *
      * @param string $name
      * @param string $col
      * @throws \Exception
      */
-    protected function setColumn($name, $col)
+    protected function setColumnWithStub($name, $col)
     {
         if ($name === 'id') return;
 
