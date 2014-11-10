@@ -208,9 +208,7 @@ class Factory {
      */
     protected function setColumns(Array $columns, Array $overrides)
     {
-        //override id if provided
-        if (isset($overrides['id']))
-            $this->class->id = $overrides['id'];
+        $processed_keys = [];
 
         //loop through table columns and fill with stub or override value
         foreach($columns as $key => $col)
@@ -219,16 +217,28 @@ class Factory {
             if ($relation = $this->hasForeignKey($key))
             {
                 $this->class->$key = $this->createRelationship($relation);
+                $processed_keys[] = $key;
                 continue;
             }
             //fill with override
             if (array_key_exists($key, $overrides))
             {
                 $this->class->$key = $overrides[$key];
+                $processed_keys[] = $key;
                 continue; 
             }
             //fill with stub
             $this->class->$key = $this->setColumnWithStub($key, $col);
+            $processed_keys[] = $key;
+        }
+
+        //in case we don't have table columns (ie table wasnt migrated) at least ensure overrides are set
+        foreach ($overrides as $override_key => $override_value)
+        {
+            if (!in_array($override_key, $processed_keys))
+            {
+                 $this->class->$override_key = $override_value;
+            }
         }
     }
 
